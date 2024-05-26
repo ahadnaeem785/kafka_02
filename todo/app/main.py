@@ -9,31 +9,31 @@ from aiokafka import AIOKafkaProducer, AIOKafkaConsumer
 import asyncio
 import json
 
-class Todo(SQLModel, table=True):
+class Todo(SQLModel):
     id: Optional[int] = Field(default=None, primary_key=True)
     content: str = Field(index=True)
 
 
 # only needed for psycopg 3 - replace postgresql
 # with postgresql+psycopg in settings.DATABASE_URL
-# connection_string = str(settings.DATABASE_URL).replace(
-#     "postgresql", "postgresql+psycopg"
-# )
+connection_string = str(settings.DATABASE_URL).replace(
+    "postgresql", "postgresql+psycopg"
+)
 
 
 # recycle connections after 5 minutes
 # to correspond with the compute scale down
-# engine = create_engine(
-#     connection_string, connect_args={}, pool_recycle=300
-# )
+engine = create_engine(
+    connection_string, connect_args={}, pool_recycle=300
+)
 
 #engine = create_engine(
 #    connection_string, connect_args={"sslmode": "require"}, pool_recycle=300
 #)
 
 
-# def create_db_and_tables()->None:
-#     SQLModel.metadata.create_all(engine)
+def create_db_and_tables()->None:
+    SQLModel.metadata.create_all(engine)
 
 async def consume_messages(topic, bootstrap_servers):
     # Create a consumer instance.
